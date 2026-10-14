@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="koel-ore-versione" content="1.0">
+<meta name="theme-color" content="#FFF8E7">
+<meta name="apple-mobile-web-app-title" content="Ore Koel">
+<link rel="apple-touch-icon" href="icona.jpg">
+<link rel="icon" href="icona.jpg">
+<title>Ore Koel</title>
+<style>
+@font-face { font-family: 'Work Sans'; src: url('worksans.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+:root {
+  --crema: #FFF8E7; --crema2: #FFF0D7; --salvia: #B9BF8E; --salvia-scuro: #A3AA79;
+  --oliva: #505D42; --titoli: #1A1A1A; --testo: #4A4A4A; --tenue: #7a7a72;
+  --terracotta: #B5583A; --bianco: #fff; --bordo: #E6E2D0;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--crema); color: var(--testo);
+  font-family: 'Work Sans', Arial, sans-serif; font-size: 17px; line-height: 1.45; }
+main { max-width: 520px; margin: 0 auto; padding: 18px 16px calc(40px + env(safe-area-inset-bottom)); }
+header { display: flex; align-items: center; gap: 12px; margin: 4px 0 18px; }
+header img { width: 54px; height: 54px; border-radius: 14px; background: #fff; }
+header .saluto { font-size: 24px; font-weight: 600; color: var(--titoli); line-height: 1.15; }
+header .sotto { font-size: 14px; color: var(--tenue); }
+.carta { background: var(--bianco); border-radius: 22px; padding: 20px 18px; margin-bottom: 16px;
+  box-shadow: 0 1px 0 var(--bordo), 0 8px 24px rgba(80, 93, 66, .07); }
+h2 { font-size: 19px; font-weight: 600; color: var(--titoli); margin: 0 0 14px; }
+.etichetta { font-size: 14px; font-weight: 600; color: var(--oliva); margin: 16px 0 8px; display: block; }
+.etichetta:first-of-type { margin-top: 0; }
+.giorni { display: flex; gap: 8px; }
+.giorni button, .giorni label { flex: 1; }
+.pillola { border: 1.5px solid var(--bordo); background: var(--crema); color: var(--titoli);
+  border-radius: 999px; padding: 11px 6px; font: inherit; font-size: 15px; font-weight: 500;
+  cursor: pointer; text-align: center; position: relative; min-height: 46px; }
+.pillola.scelta { background: var(--oliva); border-color: var(--oliva); color: #fff; }
+.pillola input[type=date] { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+.giorno-scelto { font-size: 15px; color: var(--tenue); margin-top: 8px; min-height: 21px; }
+.contatore { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: var(--crema); border-radius: 18px; padding: 8px; }
+.contatore button { width: 58px; height: 58px; border-radius: 16px; border: 0; background: var(--salvia);
+  color: #fff; font-size: 30px; font-weight: 500; cursor: pointer; flex: none; line-height: 1; }
+.contatore button:active { background: var(--salvia-scuro); }
+.contatore .valore { text-align: center; flex: 1; }
+.contatore .grande { font-size: 30px; font-weight: 600; color: var(--titoli); line-height: 1.1; }
+.contatore .minuti { font-size: 18px; font-weight: 600; color: var(--oliva); min-height: 25px; }
+.contatore .piccolo { font-size: 13px; color: var(--tenue); }
+textarea { width: 100%; border: 1.5px solid var(--bordo); border-radius: 16px; padding: 12px 14px;
+  font: inherit; font-size: 16px; color: var(--titoli); background: var(--crema); resize: vertical; min-height: 64px; }
+textarea:focus { outline: none; border-color: var(--salvia); background: #fff; }
+.salva { width: 100%; margin-top: 18px; border: 0; border-radius: 999px; padding: 17px;
+  font: inherit; font-size: 18px; font-weight: 600; color: #fff; cursor: pointer;
+  background: linear-gradient(135deg, var(--salvia) 0%, var(--salvia-scuro) 100%); }
+.salva:disabled { opacity: .55; }
+.avviso { margin-top: 12px; border-radius: 14px; padding: 11px 14px; font-size: 15px; display: none; }
+.avviso.ok { display: block; background: #EEF1E1; color: var(--oliva); }
+.avviso.errore { display: block; background: #F8E6DF; color: var(--terracotta); }
+.mese { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.mese button { border: 0; background: var(--crema); width: 44px; height: 44px; border-radius: 14px;
+  font-size: 22px; color: var(--oliva); cursor: pointer; }
+.mese button:disabled { opacity: .3; }
+.mese .nome { font-size: 19px; font-weight: 600; color: var(--titoli); text-transform: capitalize; }
+.totali { display: flex; gap: 10px; margin-bottom: 14px; }
+.totali div { flex: 1; background: var(--crema); border-radius: 16px; padding: 12px; text-align: center; }
+.totali b { display: block; font-size: 22px; color: var(--titoli); font-weight: 600; }
+.totali span { font-size: 13px; color: var(--tenue); }
+.riga { display: flex; align-items: center; gap: 10px; padding: 12px 2px; border-top: 1px solid var(--bordo); }
+.riga:first-child { border-top: 0; }
+.riga .quando { width: 74px; flex: none; font-size: 14px; color: var(--tenue); line-height: 1.25; }
+.riga .quando b { display: block; font-size: 16px; color: var(--titoli); font-weight: 600; }
+.riga .cosa { flex: 1; min-width: 0; }
+.riga .ore { font-weight: 600; color: var(--titoli); white-space: nowrap; }
+.riga .nota { font-size: 14px; color: var(--tenue); overflow-wrap: anywhere; }
+.riga .azioni { display: flex; gap: 8px; margin-top: 8px; }
+.riga .azioni button { border: 0; background: var(--crema); border-radius: 12px; padding: 8px 14px;
+  font: inherit; font-size: 14px; color: var(--oliva); cursor: pointer; }
+.vuoto { color: var(--tenue); font-size: 15px; text-align: center; padding: 10px 0 4px; }
+.persona h3 { margin: 0 0 10px; font-size: 19px; font-weight: 600; color: var(--titoli); }
+.persona details summary { cursor: pointer; color: var(--oliva); font-weight: 500; font-size: 15px; padding: 6px 0; }
+.secondario { width: 100%; border: 1.5px solid var(--salvia); background: transparent; color: var(--oliva);
+  border-radius: 999px; padding: 14px; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; }
+.piede { text-align: center; font-size: 13px; color: var(--tenue); margin-top: 22px; }
+.nascosto { display: none !important; }
+.attesa { text-align: center; padding: 60px 0; color: var(--tenue); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="logo.jpg" alt="Koel">
+    <div><div class="saluto" id="saluto">Ore Koel</div><div class="sotto" id="sotto"></div></div>
+  </header>
+
+  <div id="attesa" class="attesa">Un momento…</div>
+
+  <!-- Nessun link personale -->
+  <section id="senza-link" class="carta nascosto">
+    <h2>Serve il tuo link personale</h2>
+    <p>Questa pagina si apre dal link che ti ha mandato Giovanni. Cercalo nel messaggio e toccalo da lì.</p>
+    <p>Se il link non funziona più, scrivi a Giovanni: te ne prepara uno nuovo.</p>
+  </section>
+
+  <!-- Collaboratrice -->
+  <section id="vista-collaboratrice" class="nascosto">
+    <div class="carta">
+      <h2 id="titolo-modulo">Segna le tue ore</h2>
+      <span class="etichetta">Giorno</span>
+      <div class="giorni">
+        <button class="pillola" id="g-oggi" type="button">Oggi</button>
+        <button class="pillola" id="g-ieri" type="button">Ieri</button>
+        <label class="pillola" id="g-altro">Altro giorno<input type="date" id="g-data"></label>
+      </div>
+      <div class="giorno-scelto" id="giorno-scelto"></div>
+
+      <span class="etichetta">Ore di lavoro</span>
+      <div class="contatore">
+        <button type="button" id="meno" aria-label="Togli un quarto d'ora">−</button>
+        <div class="valore"><div class="grande" id="ore-testo"></div><div class="minuti" id="ore-minuti"></div><div class="piccolo">un quarto d'ora a tocco</div></div>
+        <button type="button" id="piu" aria-label="Aggiungi un quarto d'ora">+</button>
+      </div>
+
+      <span class="etichetta">Cosa hai fatto <span style="font-weight:400;color:var(--tenue)">(facoltativo)</span></span>
+      <textarea id="nota" maxlength="300" rows="2" placeholder="Per esempio: mail di help, calendario, idee per i social"></textarea>
+
+      <button class="salva" id="salva" type="button">Salva</button>
+      <div class="avviso" id="avviso"></div>
+    </div>
+
+    <div class="carta">
+      <div class="mese">
+        <button type="button" id="mese-prima" aria-label="Mese prima">‹</button>
+        <div class="nome" id="mese-nome"></div>
+        <button type="button" id="mese-dopo" aria-label="Mese dopo">›</button>
+      </div>
+      <div class="totali" id="totali"></div>
+      <div id="righe"></div>
+    </div>
+  </section>
+
+  <!-- Giovanni ed Elena -->
+  <section id="vista-responsabile" class="nascosto">
+    <div class="carta">
+      <div class="mese">
+        <button type="button" id="r-mese-prima" aria-label="Mese prima">‹</button>
+        <div class="nome" id="r-mese-nome"></div>
+        <button type="button" id="r-mese-dopo" aria-label="Mese dopo">›</button>
+      </div>
+      <button class="secondario" id="scarica" type="button">Scarica il mese per Excel</button>
+    </div>
+    <div id="persone"></div>
+  </section>
+
+  <div class="piede">Koel · ore di lavoro</div>
+</main>
+
+<script>
+(() => {
+  const URL_DB = 'https://emplnmhsnzlghswamzuo.supabase.co/rest/v1/rpc/';
+  // Chiave PUBBLICA per costruzione: apre solo le quattro funzioni koel_ore_*.
+  const CHIAVE_PUBBLICA = 'sb_publishable_lzvv6CPSXy4XDWFm7GCaMQ_ROKDe2zG';
+  const MEMO = 'koel-ore-chiave';
+
+  const $ = id => document.getElementById(id);
+  const MESI = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  const GIORNI = ['dom','lun','mar','mer','gio','ven','sab'];
+  const euro = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' });
+
+  const ERRORI = {
+    LINK_NON_VALIDO: 'Questo link non è più attivo. Scrivi a Giovanni per averne uno nuovo.',
+    GIORNO_FUTURO: 'Quel giorno deve ancora arrivare: scegli oggi o un giorno passato.',
+    GIORNO_TROPPO_VECCHIO: 'Si possono segnare o correggere solo questo mese e il mese scorso. Per giorni più vecchi scrivi a Giovanni.',
+    ORE_NON_VALIDE: 'Le ore vanno da un quarto d\'ora a 14 ore.',
+    NOTA_TROPPO_LUNGA: 'La nota è un po\' lunga: stai sotto i 300 caratteri.',
+    SOLO_COLLABORATRICI: 'Da questo link si vede il riepilogo, non si segnano ore.',
+    SOLO_RESPONSABILI: 'Il riepilogo di tutte è riservato.',
+  };
+
+  // --- la chiave personale: dal link, poi ricordata sul telefono -------------
+  let chiave = null;
+  const m = location.hash.match(/k=([A-Za-z0-9_-]{30,100})/);
+  if (m) { chiave = m[1]; try { localStorage.setItem(MEMO, chiave); } catch (e) {} }
+  else { try { chiave = localStorage.getItem(MEMO); } catch (e) {} }
+
+  async function chiama(funzione, parametri) {
+    let r;
+    try {
+      r = await fetch(URL_DB + funzione, {
+        method: 'POST',
+        headers: { apikey: CHIAVE_PUBBLICA, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_chiave: chiave, ...parametri }),
+      });
+    } catch (e) {
+      throw new Error('Non riesco a collegarmi. Controlla la connessione e riprova.');
+    }
+    const testo = await r.text();
+    let dati = null; try { dati = JSON.parse(testo); } catch (e) {}
+    if (!r.ok) {
+      const codice = dati && dati.message;
+      const err = new Error(ERRORI[codice] || 'Qualcosa non ha funzionato. Riprova fra un minuto; se continua, scrivi a Giovanni.');
+      err.codice = codice;
+      throw err;
+    }
+    return dati;
+  }
+
+  // --- formati -----------------------------------------------------------------
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const daIso = s => { const [a, b, c] = s.split('-').map(Number); return new Date(a, b - 1, c); };
+  const meseNome = s => { const d = daIso(s); return `${MESI[d.getMonth()]} ${d.getFullYear()}`; };
+  const giornoLungo = s => { const d = daIso(s); return `${['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'][d.getDay()]} ${d.getDate()} ${MESI[d.getMonth()]}`; };
+  function oreTesto(x) {
+    x = Number(x) || 0;
+    const h = Math.floor(x + 1e-9), min = Math.round((x - h) * 60);
+    if (h === 0) return min ? `${min} minuti` : '0 ore';
+    const parteOre = h === 1 ? '1 ora' : `${h} ore`;
+    return min ? `${parteOre} e ${min} min` : parteOre;
+  }
+  const oreBreve = x => String(Number(x)).replace('.', ',');
+  const spostaMese = (s, n) => { const d = daIso(s); return iso(new Date(d.getFullYear(), d.getMonth() + n, 1)); };
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function mostraOre() {
+    const h = Math.floor(stato.ore + 1e-9), min = Math.round((stato.ore - h) * 60);
+    $('ore-testo').textContent = h === 0 ? `${min} minuti` : (h === 1 ? '1 ora' : `${h} ore`);
+    $('ore-minuti').textContent = h > 0 && min ? `e ${min} minuti` : '';
+  }
+
+  function avviso(testo, tipo) {
+    const a = $('avviso'); a.textContent = testo; a.className = 'avviso ' + (tipo || '');
+  }
+
+  function mostra(id) {
+    ['attesa', 'senza-link', 'vista-collaboratrice', 'vista-responsabile'].forEach(x => $(x).classList.toggle('nascosto', x !== id));
+  }
+
+  // --- vista collaboratrice ---------------------------------------------------
+  const stato = { oggi: null, dal: null, giorno: null, ore: 1, mese: null, righe: [] };
+
+  function scegliGiorno(s) {
+    stato.giorno = s;
+    const ieri = iso(new Date(daIso(stato.oggi).getTime() - 864e5));
+    $('g-oggi').classList.toggle('scelta', s === stato.oggi);
+    $('g-ieri').classList.toggle('scelta', s === ieri);
+    $('g-altro').classList.toggle('scelta', s !== stato.oggi && s !== ieri);
+    $('giorno-scelto').textContent = giornoLungo(s);
+    const gia = stato.righe.find(r => r.giorno === s);
+    if (gia) {
+      stato.ore = Number(gia.ore); $('nota').value = gia.nota || '';
+      $('salva').textContent = 'Aggiorna';
+      $('titolo-modulo').textContent = 'Correggi le ore';
+    } else {
+      $('nota').value = '';
+      $('salva').textContent = 'Salva';
+      $('titolo-modulo').textContent = 'Segna le tue ore';
+    }
+    mostraOre();
+  }
+
+  function disegnaMese(d) {
+    stato.mese = d.mese; stato.righe = d.righe || [];
+    $('mese-nome').textContent = meseNome(d.mese);
+    $('mese-dopo').disabled = d.mese >= stato.oggi.slice(0, 8) + '01';
+    const quadri = [`<div><b>${esc(oreTesto(d.totale_ore))}</b><span>${d.giorni} ${d.giorni === 1 ? 'giorno' : 'giorni'}</span></div>`];
+    if (d.tariffa || (d.totale_euro !== null && d.totale_euro !== undefined)) {
+      quadri.push(`<div><b>${euro.format(d.totale_euro || 0)}</b><span>${d.tariffa ? euro.format(d.tariffa) + ' l\'ora' : 'compenso'}</span></div>`);
+    }
+    $('totali').innerHTML = quadri.join('');
+    if (!stato.righe.length) { $('righe').innerHTML = '<div class="vuoto">Nessuna ora segnata in questo mese.</div>'; return; }
+    const modificabile = g => g >= stato.dal && g <= stato.oggi;
+    $('righe').innerHTML = stato.righe.map(r => {
+      const g = daIso(r.giorno);
+      return `<div class="riga">
+        <div class="quando"><b>${g.getDate()} ${MESI[g.getMonth()].slice(0, 3)}</b>${GIORNI[g.getDay()]}</div>
+        <div class="cosa"><div class="ore">${esc(oreTesto(r.ore))}</div>${r.nota ? `<div class="nota">${esc(r.nota)}</div>` : ''}
+        ${modificabile(r.giorno) ? `<div class="azioni"><button type="button" data-cambia="${r.giorno}">Cambia</button><button type="button" data-togli="${r.giorno}">Togli</button></div>` : ''}</div>
+      </div>`;
+    }).join('');
+  }
+
+  async function caricaMese(mese) {
+    const d = await chiama('koel_ore_mie', { p_mese: mese });
+    disegnaMese(d);
+    return d;
+  }
+
+  function avviaCollaboratrice(d) {
+    stato.oggi = d.oggi; stato.dal = d.modificabile_dal;
+    stato.ore = d.ultime_ore ? Number(d.ultime_ore) : 1;
+    $('saluto').textContent = `Ciao ${d.nome}`;
+    $('sotto').textContent = 'Segna le ore quando ti è comodo';
+    $('g-data').min = d.modificabile_dal; $('g-data').max = d.oggi;
+    disegnaMese(d);
+    scegliGiorno(d.oggi);
+    mostra('vista-collaboratrice');
+
+    $('g-oggi').onclick = () => { avviso(''); scegliGiorno(stato.oggi); };
+    $('g-ieri').onclick = () => { avviso(''); scegliGiorno(iso(new Date(daIso(stato.oggi).getTime() - 864e5))); };
+    $('g-data').onchange = async e => {
+      const s = e.target.value; if (!s) return;
+      avviso('');
+      if (s.slice(0, 7) !== stato.mese.slice(0, 7)) { try { await caricaMese(s.slice(0, 8) + '01'); } catch (err) { avviso(err.message, 'errore'); } }
+      scegliGiorno(s);
+    };
+    $('meno').onclick = () => { stato.ore = Math.max(0.25, stato.ore - 0.25); mostraOre(); };
+    $('piu').onclick = () => { stato.ore = Math.min(14, stato.ore + 0.25); mostraOre(); };
+
+    $('salva').onclick = async () => {
+      const b = $('salva'); b.disabled = true; avviso('');
+      try {
+        const r = await chiama('koel_ore_salva', { p_giorno: stato.giorno, p_ore: stato.ore, p_nota: $('nota').value });
+        disegnaMese(r);
+        avviso(`Fatto: ${oreTesto(stato.ore)} ${stato.giorno === stato.oggi ? 'oggi' : giornoLungo(stato.giorno)}.`, 'ok');
+        scegliGiorno(stato.giorno);
+      } catch (err) { avviso(err.message, 'errore'); }
+      b.disabled = false;
+    };
+
+    $('righe').onclick = async e => {
+      const cambia = e.target.dataset.cambia, togli = e.target.dataset.togli;
+      if (cambia) { avviso(''); scegliGiorno(cambia); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      if (togli) {
+        if (!confirm(`Togliere le ore di ${giornoLungo(togli)}?`)) return;
+        try { disegnaMese(await chiama('koel_ore_togli', { p_giorno: togli })); scegliGiorno(stato.giorno); avviso('Giorno tolto.', 'ok'); }
+        catch (err) { avviso(err.message, 'errore'); }
+      }
+    };
+    $('mese-prima').onclick = () => caricaMese(spostaMese(stato.mese, -1)).catch(err => alert(err.message));
+    $('mese-dopo').onclick = () => caricaMese(spostaMese(stato.mese, 1)).catch(err => alert(err.message));
+  }
+
+  // --- vista Giovanni ed Elena -----------------------------------------------
+  let riepilogo = null, oggiR = null;
+
+  function disegnaRiepilogo(d) {
+    riepilogo = d;
+    $('r-mese-nome').textContent = meseNome(d.mese);
+    $('r-mese-dopo').disabled = d.mese >= oggiR.slice(0, 8) + '01';
+    $('persone').innerHTML = d.persone.map(p => {
+      const compenso = p.tariffa || (p.totale_euro !== null && p.totale_euro !== undefined)
+        ? `<div><b>${euro.format(p.totale_euro || 0)}</b><span>${p.tariffa ? euro.format(p.tariffa) + ' l\'ora' : 'compenso'}</span></div>`
+        : `<div><b style="font-size:17px;padding:4px 0">da indicare</b><span>tariffa oraria</span></div>`;
+      const avvisoTariffa = p.totale_euro !== null && Number(p.ore_senza_tariffa) > 0
+        ? `<div class="nota" style="margin:-6px 0 10px">${esc(oreTesto(p.ore_senza_tariffa))} senza tariffa, non conteggiate negli euro</div>` : '';
+      const righe = p.righe.length ? p.righe.map(r => {
+        const g = daIso(r.giorno);
+        return `<div class="riga"><div class="quando"><b>${g.getDate()} ${MESI[g.getMonth()].slice(0, 3)}</b>${GIORNI[g.getDay()]}</div>
+          <div class="cosa"><div class="ore">${esc(oreTesto(r.ore))}</div>${r.nota ? `<div class="nota">${esc(r.nota)}</div>` : ''}</div></div>`;
+      }).join('') : '<div class="vuoto">Nessuna ora segnata in questo mese.</div>';
+      return `<div class="carta persona"><h3>${esc(p.nome)}</h3>
+        <div class="totali"><div><b>${esc(oreTesto(p.totale_ore))}</b><span>${p.giorni} ${p.giorni === 1 ? 'giorno' : 'giorni'}</span></div>${compenso}</div>
+        ${avvisoTariffa}
+        <details${p.righe.length ? '' : ' open'}><summary>Vedi i giorni</summary>${righe}</details></div>`;
+    }).join('') || '<div class="carta vuoto">Nessuna collaboratrice attiva.</div>';
+  }
+
+  function scaricaCsv() {
+    if (!riepilogo) return;
+    const num = x => (x === null || x === undefined) ? '' : String(x).replace('.', ',');
+    const testo = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
+    const righe = [['Collaboratrice', 'Giorno', 'Ore', 'Nota'].join(';')];
+    riepilogo.persone.forEach(p => {
+      [...p.righe].reverse().forEach(r => righe.push([testo(p.nome), r.giorno.split('-').reverse().join('/'), num(r.ore), testo(r.nota)].join(';')));
+      righe.push([testo(p.nome + ' TOTALE'), '', num(p.totale_ore), testo(p.tariffa || p.totale_euro !== null ? 'Compenso ' + num(p.totale_euro || 0) + ' euro' : 'tariffa da indicare')].join(';'));
+    });
+    const blob = new Blob(['﻿' + righe.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `ore-koel-${riepilogo.mese.slice(0, 7)}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  async function avviaResponsabile(d) {
+    oggiR = d.oggi;
+    $('saluto').textContent = `Ciao ${d.nome}`;
+    $('sotto').textContent = 'Le ore del mese';
+    disegnaRiepilogo(await chiama('koel_ore_riepilogo', { p_mese: d.mese }));
+    mostra('vista-responsabile');
+    $('r-mese-prima').onclick = () => chiama('koel_ore_riepilogo', { p_mese: spostaMese(riepilogo.mese, -1) }).then(disegnaRiepilogo).catch(err => alert(err.message));
+    $('r-mese-dopo').onclick = () => chiama('koel_ore_riepilogo', { p_mese: spostaMese(riepilogo.mese, 1) }).then(disegnaRiepilogo).catch(err => alert(err.message));
+    $('scarica').onclick = scaricaCsv;
+  }
+
+  // --- partenza -----------------------------------------------------------------
+  (async () => {
+    if (!chiave) { mostra('senza-link'); return; }
+    try {
+      const d = await chiama('koel_ore_mie', {});
+      if (d.ruolo === 'responsabile') await avviaResponsabile(d);
+      else avviaCollaboratrice(d);
+    } catch (err) {
+      if (err.codice === 'LINK_NON_VALIDO') { try { localStorage.removeItem(MEMO); } catch (e) {} }
+      mostra('senza-link');
+      $('senza-link').querySelector('p').textContent = err.message;
+    }
+  })();
+})();
+</script>
+</body>
+</html>
